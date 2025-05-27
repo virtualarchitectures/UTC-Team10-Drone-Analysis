@@ -10,7 +10,7 @@ import re
 
 def clean_name(name):
     name = re.sub(r'[^\w\s]', '', name)
-    name = re.sub(r'\bThe\b', '', name)
+    name = re.sub(r'\b(The|at|and)\b', '', name, flags=re.IGNORECASE)
     name = name.strip()
     name_parts = name.split()
     cleaned_name = "_".join(name_parts[:2])

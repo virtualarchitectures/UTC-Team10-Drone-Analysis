@@ -29,11 +29,11 @@ def main():
     }
 
     # Define the data folder and file path
-    data_folder = 'data'
-    file_path = os.path.join(data_folder, 'hospitals.json')
+    output_folder = 'data/locations'
+    file_path = os.path.join(output_folder, 'hospitals.json')
 
     # Make sure the 'data' folder exists
-    os.makedirs(data_folder, exist_ok=True)
+    os.makedirs(output_folder, exist_ok=True)
 
     # Make the request to the Google endpoint
     response = requests.get(endpoint_url, params=params)

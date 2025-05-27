@@ -37,7 +37,10 @@ def load_hospitals(filename):
         data = json.load(file)
     return data['results']
 
-def generate_route_file(origin, destination, api_key, pair_index):
+def generate_route_file(origin, destination, api_key, pair_index, output_folder):
+    # Ensure the output folder exists
+    os.makedirs(output_folder, exist_ok=True)
+
     path = f"{origin['geometry']['location']['lat']},{origin['geometry']['location']['lng']}|{destination['geometry']['location']['lat']},{destination['geometry']['location']['lng']}"
     elevations = get_path_elevation(path, api_key=api_key, samples=10)
     route = {
@@ -46,20 +49,21 @@ def generate_route_file(origin, destination, api_key, pair_index):
     }
     origin_name = clean_name(origin['name'])
     destination_name = clean_name(destination['name'])
-    filename = f"data/{pair_index}_{origin_name}_to_{destination_name}.json"
+    filename = f"{output_folder}{pair_index}_{origin_name}_to_{destination_name}.json"
     save_route_to_file(route, filename)
 
-def generate_routes(hospitals, api_key):
+def generate_routes(hospitals, api_key, output_folder):
     for i, origin in enumerate(hospitals):
         for j, destination in enumerate(hospitals):
             if i != j:  # Avoid using the same hospital as origin and destination
-                generate_route_file(origin, destination, api_key=api_key, pair_index=f"{i}_{j}")
+                generate_route_file(origin, destination, api_key=api_key, pair_index=f"{i}_{j}", output_folder=output_folder)
 
 def main():
     load_dotenv()
     api_key = os.getenv('GOOGLE_API_KEY')
-    hospitals = load_hospitals('data/hospitals.json')
-    generate_routes(hospitals, api_key)
+    hospitals = load_hospitals('data/locations/hospitals.json')
+    output_folder = "data/elevated_routes/"
+    generate_routes(hospitals, api_key, output_folder)
 
 if __name__ == "__main__":
     main()
